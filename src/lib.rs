@@ -6,3 +6,6 @@ pub use bmp_image::BmpImage;
 
 pub mod ycr_image;
 pub use ycr_image::YcbcrImage;
+
+pub mod subsampled_ycr;
+pub use subsampled_ycr::SubsampledYCR;
