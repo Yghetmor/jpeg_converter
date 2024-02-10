@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct BmpImage {
     pub rgb_vector: Vec<u8>,
     pub width_px: u32,
