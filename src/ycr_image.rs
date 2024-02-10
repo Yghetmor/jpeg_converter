@@ -2,10 +2,10 @@ use crate::BmpImage;
 
 #[derive(Debug, PartialEq)]
 pub struct YcbcrImage {
-    y_component: Vec<Vec<u8>>,
-    cb_component: Vec<Vec<u8>>,
-    cr_component: Vec<Vec<u8>>,
-    width_px: u32,
+    pub y_component: Vec<Vec<u8>>,
+    pub cb_component: Vec<Vec<u8>>,
+    pub cr_component: Vec<Vec<u8>>,
+    pub width_px: u32,
 }
 
 impl YcbcrImage {
