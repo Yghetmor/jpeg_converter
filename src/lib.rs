@@ -9,3 +9,4 @@ pub use ycr_image::YcbcrImage;
 
 pub mod subsampled_ycr;
 pub use subsampled_ycr::SubsampledYCR;
+pub use subsampled_ycr::ShiftedYCR;
