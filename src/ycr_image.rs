@@ -6,6 +6,7 @@ pub struct YcbcrImage {
     pub cb_component: Vec<Vec<u8>>,
     pub cr_component: Vec<Vec<u8>>,
     pub width_px: u32,
+    pub height_px: u32,
 }
 
 impl YcbcrImage {
@@ -35,6 +36,7 @@ impl YcbcrImage {
             cb_component: cb_vec,
             cr_component: cr_vec,
             width_px: source.width_px,
+            height_px: source.height_px,
         }
     }
 }
@@ -55,6 +57,7 @@ mod tests {
             cb_component: vec![vec![94, 69]],
             cr_component: vec![vec![157, 90]],
             width_px: 2,
+            height_px: 1,
         };
 
         let output = YcbcrImage::get_from_rgb(input);

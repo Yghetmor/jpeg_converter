@@ -6,18 +6,20 @@ pub struct SubsampledYCR {
     cb_component: Vec<Vec<u8>>,
     cr_component: Vec<Vec<u8>>,
     width_px: u32,
+    height_px: u32,
     horizontal_sub: u32,
     vertical_sub: u32,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct ShiftedYCR {
-    y_component: Vec<Vec<i8>>,
-    cb_component: Vec<Vec<i8>>,
-    cr_component: Vec<Vec<i8>>,
-    width_px: u32,
-    horizontal_sub: u32,
-    vertical_sub: u32,
+    pub y_component: Vec<Vec<i8>>,
+    pub cb_component: Vec<Vec<i8>>,
+    pub cr_component: Vec<Vec<i8>>,
+    pub width_px: u32,
+    pub height_px: u32,
+    pub horizontal_sub: u32,
+    pub vertical_sub: u32,
 }
 
 impl SubsampledYCR {
@@ -51,6 +53,7 @@ impl SubsampledYCR {
             cb_component: subs_cb,
             cr_component: subs_cr,
             width_px: input.width_px,
+            height_px: input.height_px,
             horizontal_sub: 2,
             vertical_sub: 2,
         }
@@ -83,6 +86,7 @@ impl ShiftedYCR {
             cb_component: cb_shifted,
             cr_component: cr_shifted,
             width_px: input.width_px,
+            height_px: input.height_px,
             horizontal_sub: input.horizontal_sub,
             vertical_sub: input.vertical_sub,
         }
@@ -100,12 +104,14 @@ mod tests {
             cb_component: vec![vec![30, 70], vec![20, 80]],
             cr_component: vec![vec![20, 80], vec![30, 70]],
             width_px: 2,
+            height_px: 2,
         };
         let expected = SubsampledYCR {
             y_component: vec![vec![231, 23], vec![32, 83]],
             cb_component: vec![vec![30]],
             cr_component: vec![vec![20]],
             width_px: 2,
+            height_px: 2,
             horizontal_sub: 2,
             vertical_sub: 2,
         };
@@ -122,6 +128,7 @@ mod tests {
             cb_component: vec![vec![30]],
             cr_component: vec![vec![20]],
             width_px: 2,
+            height_px: 2,
             horizontal_sub: 2,
             vertical_sub: 2,
         };
@@ -130,6 +137,7 @@ mod tests {
             cb_component: vec![vec![-98]],
             cr_component: vec![vec![-108]],
             width_px: 2,
+            height_px: 2,
             horizontal_sub: 2,
             vertical_sub: 2,
         };
