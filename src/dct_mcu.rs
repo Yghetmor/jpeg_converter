@@ -1,4 +1,5 @@
 use crate::ShiftedYCR;
+use std::f32::consts::PI;
 
 #[derive(Debug, PartialEq)]
 pub struct MCU {
@@ -10,6 +11,11 @@ pub struct ImageAsMCU {
     y_mcu: Vec<MCU>,
     cb_mcu: Vec<MCU>,
     cr_mcu: Vec<MCU>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct DctedMcu {
+    values: Vec<Vec<f32>>,
 }
 
 impl MCU {
@@ -92,11 +98,40 @@ impl MCU {
             cr_mcu: cr_mcus,
         }
     }
+    
+    fn calculate_dct(self) -> DctedMcu {
+        let mut output_values: Vec<Vec<f32>> = vec![vec![0.0; 8]; 8];
+
+        for u in 0..8 {
+            for v in 0..8 {
+                let mut res = 0.0;
+                for x in 0..8 {
+                    for y in 0..8 {
+                        res += self.values[x][y] as f32 * (((2.0 * x as f32 + 1.0) * u as f32 * PI) / 16.0).cos() * (((2.0 * y as f32 + 1.0) * v as f32 * PI) / 16.0).cos()
+                    }
+                }
+                if u == 0 && v == 0 {
+                    output_values[u][v] = res / 8.0;
+                } else if u == 0 || v == 0 {
+                    let two: f32 = 2.0;
+                    output_values[u][v] = res / (4.0 * two.sqrt());
+                } else {
+                    output_values[u][v] = res / 4.0;
+                }
+            }
+        }
+
+        DctedMcu { 
+            values: output_values
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::{ShiftedYCR, MCU};
+
+    use super::DctedMcu;
 
     #[test]
     fn subdivision_test() {
@@ -115,5 +150,38 @@ mod tests {
         let expected_cb = vec![vec![-98; 8]; 8];
 
         assert_eq!(output.cb_mcu[0].values, expected_cb);
+    }
+
+    #[test]
+    fn dct_test() {
+        let input = MCU {
+            values: vec![
+                vec![-64, -72, -72, -71, -58, -44, -44, -69],
+                vec![-62, -64, -93, -92, -41, -83, -107, -70],
+                vec![-62, -62, -62, -69, -93, -41, -102, -24],
+                vec![-93, -53, -52, -83, -47, -91, -94, -93],
+                vec![-83, -32, -3, -21, -97, -113, -21, -38],
+                vec![-40, -39, -40, -50, -64, -71, -43, -47],
+                vec![-66, -69, -60, -15, 16, -24, -62, -55],
+                vec![-21, -7, -39, -107, -93, -64, -63, -63],
+            ]
+        };
+
+        let output = input.calculate_dct();
+
+        let expected = DctedMcu {
+            values: vec![
+                vec![-477.63, 24.47, 6.93, -25.49, -6.13, -27.83, -0.57, 6.89],
+                vec![-65.84, -22.93, -4.66, 15.25, 16.3, -12.69, 12.2, -7.67],
+                vec![7.72, -5.29, 14.03, 74.8, 3.88, -15.81, 13.35, -1.86],
+                vec![44.54, -25.13, -24.48, -14.24, 3.35, 47.02, -33.93, 13.8],
+                vec![-13.63, 22.85, 22.83, -31.1, -53.13, 22.0, -22.31, 20.27],
+                vec![11.12, -32.74, -64.88, 40.32, 17.61, -11.14, 11.72, -2.59],
+                vec![10.47, 6.93, 62.85, -8.64, -30.16, 17.07, 26.22, -22.7],
+                vec![42.47, -31.38, -4.03, -35.84, 0.41, 29.19, 10.36, -27.19]
+            ]
+        };
+
+        assert_eq!(output, expected);
     }
 }
