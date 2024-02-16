@@ -68,7 +68,7 @@ impl MCU {
                 let mut mcu = MCU::new();
                 for x in 0..8 {
                     for y in 0..8 {
-                        mcu.values[x][y] = input.y_component[i as usize + x][j as usize + y];
+                        mcu.values[x][y] = input.y_component[(i as usize) * 8 + x][(j as usize) * 8 + y];
                     }
                 }
                 y_mcus.push(mcu);
@@ -81,8 +81,8 @@ impl MCU {
                 let mut cr_mcu = MCU::new();
                 for x in 0..8 {
                     for y in 0..8 {
-                        cb_mcu.values[x][y] = input.cb_component[i as usize + x][j as usize + y];
-                        cr_mcu.values[x][y] = input.cr_component[i as usize + x][j as usize + y];
+                        cb_mcu.values[x][y] = input.cb_component[(i as usize) * 8 + x][(j as usize) * 8 + y];
+                        cr_mcu.values[x][y] = input.cr_component[(i as usize) * 8 + x][(j as usize) * 8 + y];
                     }
                 }
                 cb_mcus.push(cb_mcu);
