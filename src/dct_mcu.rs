@@ -4,6 +4,7 @@ use std::f32::consts::PI;
 #[derive(Debug, PartialEq)]
 pub struct MCU {
     values: Vec<Vec<i8>>,
+    quantized: bool,
 }
 
 #[derive(Debug, PartialEq)]
@@ -11,6 +12,7 @@ pub struct ImageAsMCU {
     y_mcu: Vec<MCU>,
     cb_mcu: Vec<MCU>,
     cr_mcu: Vec<MCU>,
+    quantized: bool,
 }
 
 #[derive(Debug, PartialEq)]
@@ -22,6 +24,7 @@ impl MCU {
     fn new() -> MCU{
         MCU {
             values: vec![vec![0; 8]; 8],
+            quantized: false,
         }
     }
 
@@ -96,6 +99,7 @@ impl MCU {
             y_mcu: y_mcus,
             cb_mcu: cb_mcus,
             cr_mcu: cr_mcus,
+            quantized: false,
         }
     }
     
@@ -164,7 +168,8 @@ mod tests {
                 vec![-40, -39, -40, -50, -64, -71, -43, -47],
                 vec![-66, -69, -60, -15, 16, -24, -62, -55],
                 vec![-21, -7, -39, -107, -93, -64, -63, -63],
-            ]
+            ],
+            quantized: false,
         };
 
         let output = input.calculate_dct();
