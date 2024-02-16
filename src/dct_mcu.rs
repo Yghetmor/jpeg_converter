@@ -173,6 +173,28 @@ impl DctedMcu {
     }
 }
 
+impl ImageAsMCU {
+    fn process_image(mut self) {
+        if !self.quantized{
+            for mut mcu in self.y_mcu {
+                mcu = mcu.calculate_dct().quantize(true);
+            }
+
+            for mut mcu in self.cb_mcu {
+                mcu = mcu.calculate_dct().quantize(false);
+            }
+
+            for mut mcu in self.cr_mcu {
+                mcu = mcu.calculate_dct().quantize(false);
+            }
+
+            self.quantized = true;
+        } else {
+            eprintln!("Image is already processed");
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{ShiftedYCR, MCU};
