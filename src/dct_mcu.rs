@@ -129,6 +129,45 @@ impl MCU {
             values: output_values
         }
     }
+
+    fn zig_zag_traversal(&self) -> Vec<i8> {
+        let mut up = true;
+        let mut i: i32 = 0;
+        let mut j: i32 = 0;
+        let mut output: Vec<i8> = Vec::new();
+        let max_len = 64;
+
+        while output.len() < max_len - 1 {
+            if i < 0 {
+                i += 1;
+                up = false;
+            } 
+            if j < 0 {
+                j += 1;
+                up = true;
+            } 
+            if i >= self.values.len() as i32 {
+                i -= 1;
+                up = true;
+            } 
+            if j >= self.values[i as usize].len() as i32 {
+                j -= 1;
+                up = false;
+            }
+
+            output.push(self.values[i as usize][j as usize]);
+
+            if up {
+                i -= 1;
+                j += 1;
+            } else {
+                i += 1;
+                j -= 1;
+            }
+        }
+
+        output
+    }
 }
 
 const Y_QUANTIZATION_TABLE: [[f32; 8]; 8] = [
@@ -288,6 +327,29 @@ mod tests {
             ],
             quantized: true,
         };
+
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn zig_zag_test() {
+        let input = MCU {
+            values: vec![
+                vec![-30, 2, 1, -2, 0, 0, 0, 0],
+                vec![-5, -2, 0, 1, 0, 0, 0, 0],
+                vec![0, 0, 0, 1, 0, 0, 0, 0],
+                vec![1, 0, 0, 0, 0, 0, 0, 0],
+                vec![0; 8],
+                vec![0; 8],
+                vec![0; 8],
+                vec![0; 8],
+            ],
+            quantized: true,
+        };
+
+        let output = input.zig_zag_traversal();
+
+        let expected: Vec<i8> = vec![-30, 2, -5, 0, -2, 1, -2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
 
         assert_eq!(output, expected);
     }
