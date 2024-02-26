@@ -137,7 +137,7 @@ impl MCU {
         let mut output: Vec<i8> = Vec::new();
         let max_len = 64;
 
-        while output.len() < max_len - 1 {
+        while output.len() < max_len {
             if i < 0 {
                 i += 1;
                 up = false;
@@ -349,7 +349,7 @@ mod tests {
 
         let output = input.zig_zag_traversal();
 
-        let expected: Vec<i8> = vec![-30, 2, -5, 0, -2, 1, -2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
+        let expected: Vec<i8> = vec![-30, 2, -5, 0, -2, 1, -2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
 
         assert_eq!(output, expected);
     }

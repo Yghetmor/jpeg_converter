@@ -13,3 +13,6 @@ pub use subsampled_ycr::ShiftedYCR;
 
 pub mod dct_mcu;
 pub use dct_mcu::MCU;
+
+pub mod encoding;
+pub use encoding::RLEncoded;
