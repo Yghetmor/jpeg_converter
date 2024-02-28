@@ -15,9 +15,9 @@ impl RLEncoded {
                     ac_coef.push((0, 0));
                 }
             } else {
-                while cnt >= 15 {
+                while cnt >= 16 {
                     ac_coef.push((15, 0));
-                    cnt -= 15;
+                    cnt -= 16;
                 }
                 ac_coef.push((cnt, input[i]));
                 cnt = 0;
@@ -50,7 +50,7 @@ mod tests {
 
         let expected2 = RLEncoded {
             dc_coef: -30,
-            ac_coefs: vec![(0, 2), (0, -5), (1, -2), (0, 1), (0, -2), (2, 1), (3, 1), (3, 1), (15, 0), (15, 0), (15, 0), (0, 1)],
+            ac_coefs: vec![(0, 2), (0, -5), (1, -2), (0, 1), (0, -2), (2, 1), (3, 1), (3, 1), (15, 0), (15, 0), (13, 1)],
         };
 
         assert_eq!(output1, expected1);
