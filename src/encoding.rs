@@ -28,7 +28,7 @@ impl BitCode {
         }
     }
 
-    pub fn get_bitcode(input: i8, codes: &Vec<BitCode>) -> BitCode {
+    pub fn get_dc_bitcode(input: i8, codes: &Vec<BitCode>) -> BitCode {
         let mut negative = false;
         if input < 0 {
             negative = true;
@@ -40,6 +40,25 @@ impl BitCode {
         }
         let the_code = codes[length as usize].clone();
         let bit_representation: u16 = if negative {(((input * (-1)) as i16) + (2_i16.pow(length) - 1)).try_into().unwrap()} else {input as u16};
+        BitCode {
+            code: (the_code.code << length) | bit_representation,
+            num_bits: length + the_code.num_bits,
+        }
+    }
+
+    pub fn get_ac_bitcode(input: (u8, i8), codes: &Vec<BitCode>) -> BitCode {
+        let mut negative = false;
+        if input.1 < 0 {
+            negative = true;
+        }
+        let val = input.1.abs();
+        let mut length = 0;
+        while 2_i32.pow(length) <= (val as i32) {
+            length += 1;
+        }
+        let coefficient = length | (input.0 << 4) as u32;
+        let the_code = codes[coefficient as usize].clone();
+        let bit_representation: u16 = if negative {(((val * (-1)) as i16) + (2_i16.pow(length) - 1)).try_into().unwrap()} else {val as u16};
         BitCode {
             code: (the_code.code << length) | bit_representation,
             num_bits: length + the_code.num_bits,
@@ -129,21 +148,31 @@ mod tests {
     #[test]
     fn get_bitcode_test() {
         let dc_lum_codes = BitCode::calculate_huffman_codes(DC_LUMINANCE_CODES_PER_BITSIZE.to_vec(), DC_LUMINANCE_VALUES.to_vec());
-        let ac_chrom_codes = BitCode::calculate_huffman_codes(AC_LUMINANCE_CODES_PER_BITSIZE.to_vec(), AC_LUMINANCE_VALUES.to_vec());
         let input1: i8 = -30;
         let input2: i8 = 3;
-        let input3: i8 = 10;
-        let output1 = BitCode::get_bitcode(input1, &dc_lum_codes);
-        let output2 = BitCode::get_bitcode(input2, &dc_lum_codes);
-        let output3 = BitCode::get_bitcode(input3, &ac_chrom_codes);
+        let output1 = BitCode::get_dc_bitcode(input1, &dc_lum_codes);
+        let output2 = BitCode::get_dc_bitcode(input2, &dc_lum_codes);
 
         let expected1 = BitCode::new_with_params(0b11000001, 8);
         let expected2 = BitCode::new_with_params(0b01111, 5);
-        let expected3 = BitCode::new_with_params(0b10111010, 8);
 
         assert_eq!(output1, expected1);
         assert_eq!(output2, expected2);
-        assert_eq!(output3, expected3);
+    }
+
+    #[test]
+    fn get_ac_bitcode_test() {
+        let ac_lum_codes = BitCode::calculate_huffman_codes(AC_LUMINANCE_CODES_PER_BITSIZE.to_vec(), AC_LUMINANCE_VALUES.to_vec());
+        let input1: (u8, i8) = (0, 10);
+        let input2: (u8, i8) = (3, 1);
+        let output1 = BitCode::get_ac_bitcode(input1, &ac_lum_codes);
+        let output2 = BitCode::get_ac_bitcode(input2, &ac_lum_codes);
+
+        let expected1 = BitCode::new_with_params(0b10111010, 8);
+        let expected2 = BitCode::new_with_params(0b1110101, 7);
+
+        assert_eq!(output1, expected1);
+        assert_eq!(output2, expected2);
     }
 
     #[test]
