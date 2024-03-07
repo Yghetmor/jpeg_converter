@@ -17,3 +17,6 @@ pub use dct_mcu::MCU;
 pub mod encoding;
 pub use encoding::RLEncoded;
 pub use encoding::BitCode;
+
+pub mod writer;
+pub use writer::Writer;

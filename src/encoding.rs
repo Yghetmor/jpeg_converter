@@ -9,8 +9,8 @@ const AC_CHROMINANCE_VALUES: [u8; 162] = [0x00,0x01,0x02,0x03,0x11,0x04,0x05,0x2
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct BitCode {
-    code: u16,
-    num_bits: u32,
+    pub code: u16,
+    pub num_bits: u32,
 }
 
 impl BitCode {
