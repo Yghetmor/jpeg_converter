@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+use crate::dct_mcu::ImageAsMCU;
 use crate::BitCode;
 
 pub struct Writer<'a> {
@@ -70,8 +71,38 @@ impl<'a> Writer<'a> {
         }
     }
 
-    pub fn write_sof() {
+    pub fn write_image(&mut self, image: &ImageAsMCU, y_quant_table_id: u32, c_quant_table_id: u32) {
+        let mut output: Vec<u8> = vec![0xFF, 0xC0];
+        let length: u8 = 17;
+        output.push(0x00);
+        output.push(length);
+        output.push(8); //Precision
+        output.push((image.height_px >> 8) as u8);
+        output.push(image.height_px as u8);
+        output.push((image.width_px >> 8) as u8);
+        output.push(image.width_px as u8);
+        output.push(3); //nb of components
+        for i in 0..3 {
+            output.push(i); //component id
+            output.push(1); //horizontal sampling factor
+            output.push(1); //vertical sampling factor
+            if i == 0 {
+                output.push(y_quant_table_id as u8);
+            } else {
+                output.push(c_quant_table_id as u8);
+            }
+        }
+        self.file.write_all(&output).unwrap();
+    }
 
+    fn write_huffman_table(&mut self, codes: &[u8; 16], vals: Vec<u8>, tc: u8, th: u8) {
+        self.file.write_all(&[0xFF, 0xC4]).unwrap();
+        let length: u8 = 2 + 1 + 16 + vals.len() as u8;
+        self.file.write_all(&[0x00, length]).unwrap();
+        let tables_info: u8 = (tc << 4) | th;
+        self.file.write_all(&[tables_info]).unwrap();
+        self.file.write_all(codes).unwrap();
+        self.file.write_all(&vals).unwrap();
     }
 }
 
@@ -79,6 +110,7 @@ const ZIG_ZAG_ORDER: [(usize, usize); 64] = [(0,0), (0,1), (1,0), (2,0), (1,1), 
 
 #[cfg(test)]
 mod tests {
+    use crate::encoding::{DC_LUMINANCE_CODES_PER_BITSIZE, DC_LUMINANCE_VALUES};
     use crate::{BitCode, Writer};
     use crate::dct_mcu::Y_QUANTIZATION_TABLE;
 
@@ -134,6 +166,25 @@ mod tests {
 
         let expected: Vec<u8> = vec![
             0xFF, 0xDB, 0x00, 67, 0, 16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40, 58, 51, 61, 60, 57, 51, 56, 55, 64, 72, 92, 78, 64, 68, 87, 69, 55, 56, 80, 109, 81, 87, 95, 98, 103, 104, 103, 62, 77, 113, 121, 112, 100, 120, 92, 101, 103, 99 
+        ];
+
+        drop(writer);
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn write_huffman_table_test() {
+        let mut output: Vec<u8> = Vec::new();
+        let mut writer = Writer {
+            buffer: 0,
+            index: 0,
+            file: Box::new(&mut output),
+        };
+
+        writer.write_huffman_table(&DC_LUMINANCE_CODES_PER_BITSIZE, DC_LUMINANCE_VALUES.to_vec(), 0, 0);
+
+        let expected: Vec<u8> = vec![
+            0xFF, 0xC4, 00, 31, 0, 0,1,5,1,1,1,1,1,1,0,0,0,0,0,0,0, 0,1,2,3,4,5,6,7,8,9,10,11 
         ];
 
         drop(writer);

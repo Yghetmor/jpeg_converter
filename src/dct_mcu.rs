@@ -9,14 +9,14 @@ pub struct MCU {
 
 #[derive(Debug, PartialEq)]
 pub struct ImageAsMCU {
-    y_mcu: Vec<MCU>,
-    cb_mcu: Vec<MCU>,
-    cr_mcu: Vec<MCU>,
-    quantized: bool,
-    width_px: u32,
-    height_px: u32,
-    horizontal_sub: u32,
-    vertical_sub: u32,
+    pub y_mcu: Vec<MCU>,
+    pub cb_mcu: Vec<MCU>,
+    pub cr_mcu: Vec<MCU>,
+    pub quantized: bool,
+    pub width_px: u32,
+    pub height_px: u32,
+    pub horizontal_sub: u32,
+    pub vertical_sub: u32,
 }
 
 #[derive(Debug, PartialEq)]
