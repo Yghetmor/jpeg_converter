@@ -13,6 +13,10 @@ pub struct ImageAsMCU {
     cb_mcu: Vec<MCU>,
     cr_mcu: Vec<MCU>,
     quantized: bool,
+    width_px: u32,
+    height_px: u32,
+    horizontal_sub: u32,
+    vertical_sub: u32,
 }
 
 #[derive(Debug, PartialEq)]
@@ -100,6 +104,10 @@ impl MCU {
             cb_mcu: cb_mcus,
             cr_mcu: cr_mcus,
             quantized: false,
+            width_px: input.width_px,
+            height_px: input.height_px,
+            horizontal_sub: input.horizontal_sub,
+            vertical_sub: input.vertical_sub,
         }
     }
     
