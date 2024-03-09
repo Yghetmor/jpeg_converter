@@ -3,6 +3,7 @@ use std::io::Write;
 use std::path::Path;
 
 use crate::dct_mcu::ImageAsMCU;
+use crate::encoding::{AC_CHROMINANCE_CODES_PER_BITSIZE, AC_CHROMINANCE_VALUES, AC_LUMINANCE_CODES_PER_BITSIZE, AC_LUMINANCE_VALUES, DC_CHROMINANCE_CODES_PER_BITSIZE, DC_CHROMINANCE_VALUES, DC_LUMINANCE_CODES_PER_BITSIZE, DC_LUMINANCE_VALUES};
 use crate::BitCode;
 
 pub struct Writer<'a> {
@@ -38,6 +39,9 @@ impl<'a> Writer<'a> {
         while self.index >= 8 {
             let out = self.buffer >> self.index - (self.index / 8) * 8;
             let output: [u8; 1] = [out as u8];
+            if output[0] == 0xFF {
+                self.file.write_all(&[0x00]).unwrap();
+            }
             match self.file.write_all(&output) {
                 Err(why) => panic!("couldn't write : {}", why),
                 Ok(_) => {
@@ -71,7 +75,10 @@ impl<'a> Writer<'a> {
         }
     }
 
-    pub fn write_image(&mut self, image: &ImageAsMCU, y_quant_table_id: u32, c_quant_table_id: u32) {
+    pub fn write_sof(&mut self, image: &ImageAsMCU, y_quant_table_id: u32, c_quant_table_id: u32) {
+        if !image.quantized {
+            panic!("image is not quantized : cannot write SOS");
+        }
         let mut output: Vec<u8> = vec![0xFF, 0xC0];
         let length: u8 = 17;
         output.push(0x00);
@@ -93,6 +100,17 @@ impl<'a> Writer<'a> {
             }
         }
         self.file.write_all(&output).unwrap();
+        self.write_huffman_table(&DC_LUMINANCE_CODES_PER_BITSIZE, DC_LUMINANCE_VALUES.to_vec(), 0, 0);
+        self.write_huffman_table(&DC_CHROMINANCE_CODES_PER_BITSIZE, DC_CHROMINANCE_VALUES.to_vec(), 0, 1);
+        self.write_huffman_table(&AC_LUMINANCE_CODES_PER_BITSIZE, AC_LUMINANCE_VALUES.to_vec(), 1, 2);
+        self.write_huffman_table(&AC_CHROMINANCE_CODES_PER_BITSIZE, AC_CHROMINANCE_VALUES.to_vec(), 1, 3);
+    }
+
+    pub fn write_sos(&mut self) {
+        self.file.write_all(&[0xFF, 0xDA, 0x00, 9, 3]).unwrap();
+        self.file.write_all(&[0x00, 0x02]).unwrap();
+        self.file.write_all(&[0x01, 0x13]).unwrap();
+        self.file.write_all(&[0x02, 0x13]).unwrap();
     }
 
     fn write_huffman_table(&mut self, codes: &[u8; 16], vals: Vec<u8>, tc: u8, th: u8) {
@@ -103,6 +121,14 @@ impl<'a> Writer<'a> {
         self.file.write_all(&[tables_info]).unwrap();
         self.file.write_all(codes).unwrap();
         self.file.write_all(&vals).unwrap();
+    }
+
+    pub fn write_soi(&mut self) {
+        self.file.write_all(&[0xFF, 0xD8]).unwrap();
+    }
+
+    pub fn write_eoi(&mut self) {
+        self.file.write_all(&[0xFF, 0xD9]).unwrap();
     }
 }
 
