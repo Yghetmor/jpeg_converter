@@ -87,8 +87,8 @@ impl BitCode {
 
 #[derive(Debug, PartialEq)]
 pub struct RLEncoded {
-    dc_coef: i8,
-    ac_coefs: Vec<(u8, i8)>
+    pub dc_coef: i8,
+    pub ac_coefs: Vec<(u8, i8)>
 }
 
 impl RLEncoded {

@@ -3,7 +3,7 @@ use std::f32::consts::PI;
 
 #[derive(Debug, PartialEq)]
 pub struct MCU {
-    values: Vec<Vec<i8>>,
+    pub values: Vec<Vec<i8>>,
     quantized: bool,
 }
 
@@ -32,7 +32,7 @@ impl MCU {
         }
     }
 
-    fn get_mcus(mut input: ShiftedYCR) -> ImageAsMCU {
+    pub fn get_mcus(mut input: ShiftedYCR) -> ImageAsMCU {
         let col_mod = 8 - input.width_px % 8;
         let line_mod = 8 - input.height_px % 8;
 
@@ -138,7 +138,7 @@ impl MCU {
         }
     }
 
-    fn zig_zag_traversal(&self) -> Vec<i8> {
+    pub fn zig_zag_traversal(&self) -> Vec<i8> {
         let mut up = true;
         let mut i: i32 = 0;
         let mut j: i32 = 0;
@@ -221,23 +221,36 @@ impl DctedMcu {
 }
 
 impl ImageAsMCU {
-    fn process_image(mut self) {
+    pub fn process_image(mut self) -> Result<ImageAsMCU, String> {
         if !self.quantized{
-            for mut mcu in self.y_mcu {
-                mcu = mcu.calculate_dct().quantize(true);
+            let mut y_mcu_vec: Vec<MCU> = Vec::new();
+            let mut cb_mcu_vec: Vec<MCU> = Vec::new();
+            let mut cr_mcu_vec: Vec<MCU> = Vec::new();
+
+            for mcu in self.y_mcu {
+                y_mcu_vec.push(mcu.calculate_dct().quantize(true));
             }
 
-            for mut mcu in self.cb_mcu {
-                mcu = mcu.calculate_dct().quantize(false);
+            for mcu in self.cb_mcu {
+                cb_mcu_vec.push(mcu.calculate_dct().quantize(true));
             }
 
-            for mut mcu in self.cr_mcu {
-                mcu = mcu.calculate_dct().quantize(false);
+            for mcu in self.cr_mcu {
+                cr_mcu_vec.push(mcu.calculate_dct().quantize(true));
             }
 
-            self.quantized = true;
+            Ok(ImageAsMCU{
+                y_mcu: y_mcu_vec,
+                cb_mcu: cb_mcu_vec,
+                cr_mcu: cr_mcu_vec,
+                quantized: true,
+                width_px: self.width_px,
+                height_px: self.height_px,
+                horizontal_sub: self.horizontal_sub,
+                vertical_sub: self.vertical_sub,
+            })
         } else {
-            eprintln!("Image is already processed");
+            Err("Image is already processed".to_string())
         }
     }
 }
