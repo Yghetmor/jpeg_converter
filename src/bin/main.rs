@@ -44,6 +44,11 @@ fn main() {
     let mut last_dc_lum: i8 = 0;
     let mut last_dc_cb: i8 = 0;
     let mut last_dc_cr: i8 = 0;
+
+    println!("y MCU len = {}", quantized_image_mcu.y_mcu.len());
+    println!("cb MCU len = {}", quantized_image_mcu.cb_mcu.len());
+    println!("cr MCU len = {}", quantized_image_mcu.cr_mcu.len());
+
     for i in 0..quantized_image_mcu.y_mcu.len() {
        if i == 0 {
             let y_encoded = RLEncoded::new(quantized_image_mcu.y_mcu[i].zig_zag_traversal());
