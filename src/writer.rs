@@ -45,8 +45,9 @@ impl<'a> Writer<'a> {
             match self.file.write_all(&output) {
                 Err(why) => panic!("couldn't write : {}", why),
                 Ok(_) => {
-                    self.buffer &= u32::MAX >> (32 - self.index + 8);
+                    //self.buffer &= (u32::MAX >> (32 - self.index + 8));
                     self.index -= 8;
+                    self.buffer &= !(u32::MAX << self.index);
                 },
             }
         }
