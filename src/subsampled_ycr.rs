@@ -23,6 +23,19 @@ pub struct ShiftedYCR {
 }
 
 impl SubsampledYCR {
+    pub fn no_subsample(input: YcbcrImage) -> SubsampledYCR {
+        SubsampledYCR {
+            y_component: input.y_component,
+            cb_component: input.cb_component,
+            cr_component: input.cr_component,
+            width_px: input.width_px,
+            height_px: input.height_px,
+            horizontal_sub: 2,
+            vertical_sub: 2,
+        }
+
+    }
+
     pub fn subsample(input: YcbcrImage) -> SubsampledYCR {
         let mut subs_cb: Vec<Vec<u8>> = Vec::new();
         let mut subs_cr: Vec<Vec<u8>> = Vec::new();

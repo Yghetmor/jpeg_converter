@@ -21,7 +21,14 @@ fn main() {
 
     let rgb_vec = BmpImage::get_from_file(files.in_file_path);
     let ycbcr_image = YcbcrImage::get_from_rgb(rgb_vec);
-    let subsampled = SubsampledYCR::subsample(ycbcr_image);
+    println!("Y component size = {}", &ycbcr_image.y_component.len());
+    println!("Y comp width : {}", &ycbcr_image.y_component[0].len());
+    println!("Cb component size = {}", &ycbcr_image.cb_component.len());
+    println!("Cb comp width : {}", &ycbcr_image.cb_component[0].len());
+    println!("Cr component size = {}", &ycbcr_image.cr_component.len());
+    println!("Cr comp width : {}", &ycbcr_image.cr_component[0].len());
+
+    let subsampled = SubsampledYCR::no_subsample(ycbcr_image);
     let shifted = ShiftedYCR::shift(subsampled);
     let quantized_image_mcu = MCU::get_mcus(shifted).process_image().unwrap();
 
