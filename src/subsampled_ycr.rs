@@ -33,7 +33,6 @@ impl SubsampledYCR {
             horizontal_sub: 2,
             vertical_sub: 2,
         }
-
     }
 
     pub fn subsample(input: YcbcrImage) -> SubsampledYCR {

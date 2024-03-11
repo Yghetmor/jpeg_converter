@@ -92,8 +92,7 @@ impl<'a> Writer<'a> {
         output.push(3); //nb of components
         for i in 0..3 {
             output.push(i); //component id
-            output.push(1); //horizontal sampling factor
-            output.push(1); //vertical sampling factor
+            output.push(0x11); //horizontal and vertical sampling factor
             if i == 0 {
                 output.push(y_quant_table_id as u8);
             } else {
@@ -108,10 +107,11 @@ impl<'a> Writer<'a> {
     }
 
     pub fn write_sos(&mut self) {
-        self.file.write_all(&[0xFF, 0xDA, 0x00, 9, 3]).unwrap();
+        self.file.write_all(&[0xFF, 0xDA, 0x00, 12, 3]).unwrap();
         self.file.write_all(&[0x00, 0x02]).unwrap();
         self.file.write_all(&[0x01, 0x13]).unwrap();
         self.file.write_all(&[0x02, 0x13]).unwrap();
+        self.file.write_all(&[0x3F, 0x00]).unwrap();
     }
 
     fn write_huffman_table(&mut self, codes: &[u8; 16], vals: Vec<u8>, tc: u8, th: u8) {
