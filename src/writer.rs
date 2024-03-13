@@ -39,9 +39,6 @@ impl<'a> Writer<'a> {
         while self.index >= 8 {
             let out = self.buffer >> self.index - (self.index / 8) * 8;
             let output: [u8; 1] = [out as u8];
-            if output[0] == 0xFF {
-                self.file.write_all(&[0x00]).unwrap();
-            }
             match self.file.write_all(&output) {
                 Err(why) => panic!("couldn't write : {}", why),
                 Ok(_) => {
@@ -49,6 +46,9 @@ impl<'a> Writer<'a> {
                     self.index -= 8;
                     self.buffer &= !(u32::MAX << self.index);
                 },
+            }
+            if output[0] == 0xFF {
+                self.file.write_all(&[0x00]).unwrap();
             }
         }
     }
@@ -116,7 +116,7 @@ impl<'a> Writer<'a> {
 
     fn write_huffman_table(&mut self, codes: &[u8; 16], vals: Vec<u8>, tc: u8, th: u8) {
         self.file.write_all(&[0xFF, 0xC4]).unwrap();
-        let length: u8 = 2 + 1 + 16 + vals.len() as u8;
+        let length: u8 = 2 + 1 + 16 + (vals.len() as u8);
         self.file.write_all(&[0x00, length]).unwrap();
         let tables_info: u8 = (tc << 4) | th;
         self.file.write_all(&[tables_info]).unwrap();
