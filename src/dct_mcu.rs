@@ -52,6 +52,7 @@ impl MCU {
                     line.push(line[line.len() - 1].clone());
                 }
             }
+            input.width_px += col_mod;
         }
 
         if line_mod != 8 {
@@ -64,6 +65,7 @@ impl MCU {
             for _ in 0..(line_mod * input.horizontal_sub) {
                 input.cr_component.push(input.cr_component[input.cr_component.len() - 1].clone());
             }
+            input.height_px += line_mod;
         }
 
         let mut y_mcus: Vec<MCU> = Vec::new();
@@ -275,9 +277,13 @@ mod tests {
 
         let output = MCU::get_mcus(input);
 
+        let expected_y = vec![vec![103; 8]; 8];
         let expected_cb = vec![vec![-98; 8]; 8];
+        let expected_cr = vec![vec![37; 8]; 8];
 
+        assert_eq!(output.y_mcu[0].values, expected_y);
         assert_eq!(output.cb_mcu[0].values, expected_cb);
+        assert_eq!(output.cr_mcu[0].values, expected_cr);
     }
 
     //FOLLOWING TEST IS OK BUT DOESNT PASS BC OF PRECISION
