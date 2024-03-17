@@ -140,42 +140,14 @@ impl MCU {
         }
     }
 
+    const ZIG_ZAG_ORDER: [(usize, usize); 64] = [(0,0), (0,1), (1,0), (2,0), (1,1), (0,2), (0,3), (1,2), (2,1), (3,0), (4,0), (3,1), (2,2), (1,3), (0,4), (0,5), (1,4), (2,3), (3,2), (4,1), (5,0), (6,0), (5,1), (4,2), (3,3), (2,4), (1,5), (0,6), (0,7), (1,6), (2,5), (3,4), (4,3), (5,2), (6,1), (7,0), (7,1), (6,2), (5,3), (4,4), (3,5), (2,6), (1,7), (2,7), (3,6), (4,5), (5,4), (6,3), (7,2), (7,3), (6,4), (5,5), (4,6), (3,7), (4,7), (5,6), (6,5), (7,4), (7,5), (6,6), (5,7), (6,7), (7,6), (7,7)];
+
     pub fn zig_zag_traversal(&self) -> Vec<i8> {
-        let mut up = true;
-        let mut i: i32 = 0;
-        let mut j: i32 = 0;
         let mut output: Vec<i8> = Vec::new();
-        let max_len = 64;
-
-        while output.len() < max_len {
-            if i < 0 {
-                i += 1;
-                up = false;
-            } 
-            if j < 0 {
-                j += 1;
-                up = true;
-            } 
-            if i >= self.values.len() as i32 {
-                i -= 1;
-                up = true;
-            } 
-            if j >= self.values[i as usize].len() as i32 {
-                j -= 1;
-                up = false;
-            }
-
-            output.push(self.values[i as usize][j as usize]);
-
-            if up {
-                i -= 1;
-                j += 1;
-            } else {
-                i += 1;
-                j -= 1;
-            }
+        for (i, j) in Self::ZIG_ZAG_ORDER {
+            output.push(self.values[i][j]);
         }
-
+        
         output
     }
 }
@@ -360,7 +332,7 @@ mod tests {
 
     #[test]
     fn zig_zag_test() {
-        let input = MCU {
+        let input1 = MCU {
             values: vec![
                 vec![-30, 2, 1, -2, 0, 0, 0, 0],
                 vec![-5, -2, 0, 1, 0, 0, 0, 0],
@@ -374,10 +346,27 @@ mod tests {
             quantized: true,
         };
 
-        let output = input.zig_zag_traversal();
+        let input2 = MCU {
+            values: vec![
+                vec![1,2,6,7,15,16,28,29],
+                vec![3,5,8,14,17,27,30,43],
+                vec![4,9,13,18,26,31,42,44],
+                vec![10,12,19,25,32,41,45,54],
+                vec![11,20,24,33,40,46,53,55],
+                vec![21,23,34,39,47,52,56,61],
+                vec![22,35,38,48,51,57,60,62],
+                vec![36,37,49,50,58,59,63,64],
+            ],
+            quantized: true,
+        };
 
-        let expected: Vec<i8> = vec![-30, 2, -5, 0, -2, 1, -2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
+        let output1 = input1.zig_zag_traversal();
+        let output2 = input2.zig_zag_traversal();
 
-        assert_eq!(output, expected);
+        let expected1: Vec<i8> = vec![-30, 2, -5, 0, -2, 1, -2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
+        let expected2: Vec<i8> = (1..=64).collect();
+
+        assert_eq!(output1, expected1);
+        assert_eq!(output2, expected2);
     }
 }
