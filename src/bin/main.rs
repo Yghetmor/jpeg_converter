@@ -37,6 +37,7 @@ fn main() {
     let mut writer = Writer::new(&files.out_file_path);
     
     writer.write_soi();
+    writer.write_jfif();
     let y_quant_table_id: u8 = 0;
     let c_quant_table_id: u8 = 1;
     writer.write_quant_table(&Y_QUANTIZATION_TABLE, y_quant_table_id);

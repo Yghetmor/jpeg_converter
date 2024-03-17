@@ -131,6 +131,15 @@ impl<'a> Writer<'a> {
     pub fn write_eoi(&mut self) {
         self.file.write_all(&[0xFF, 0xD9]).unwrap();
     }
+
+    pub fn write_jfif(&mut self) {
+        self.file.write_all(&[0xFF, 0xE0]).unwrap();
+        self.file.write_all(&[0x00, 16]).unwrap();
+        self.file.write_all(b"JFIF\0").unwrap();
+        self.file.write_all(&[0x01, 0x02]).unwrap();
+        self.file.write_all(&[0x00, 0x00, 0x01, 0x00, 0x01]).unwrap();
+        self.file.write_all(&[0x00, 0x00]).unwrap();
+    }
 }
 
 const ZIG_ZAG_ORDER: [(usize, usize); 64] = [(0,0), (0,1), (1,0), (2,0), (1,1), (0,2), (0,3), (1,2), (2,1), (3,0), (4,0), (3,1), (2,2), (1,3), (0,4), (0,5), (1,4), (2,3), (3,2), (4,1), (5,0), (6,0), (5,1), (4,2), (3,3), (2,4), (1,5), (0,6), (0,7), (1,6), (2,5), (3,4), (4,3), (5,2), (6,1), (7,0), (7,1), (6,2), (5,3), (4,4), (3,5), (2,6), (1,7), (2,7), (3,6), (4,5), (5,4), (6,3), (7,2), (7,3), (6,4), (5,5), (4,6), (3,7), (4,7), (5,6), (6,5), (7,4), (7,5), (6,6), (5,7), (6,7), (7,6), (7,7)];
