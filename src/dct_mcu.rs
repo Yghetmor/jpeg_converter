@@ -237,25 +237,36 @@ mod tests {
 
     #[test]
     fn subdivision_test() {
+        let mut vec: Vec<i8> = vec![50;8];
+        let mut vec2: Vec<i8> = vec![20;6];
+        vec.append(&mut vec2);
+        let mut vec3: Vec<i8> = vec![100;8];
+        let mut vec4: Vec<i8> = vec![-2;6];
+        vec3.append(&mut vec4);
+        let y = vec![
+            vec.clone(), vec.clone(), vec.clone(), vec.clone(), vec.clone(), vec.clone(), vec.clone(), vec.clone(), vec3.clone(), vec3.clone(), vec3.clone(), vec3.clone(), vec3.clone(), vec3.clone()
+        ];
         let input = ShiftedYCR {
-            y_component: vec![vec![103; 6]; 6], 
-            cb_component: vec![vec![-98; 6]; 6],
-            cr_component: vec![vec![37; 6]; 6],
-            width_px: 6,
-            height_px: 6,
+            y_component: y.clone(), 
+            cb_component: y.clone(),
+            cr_component: y.clone(),
+            width_px: 14,
+            height_px: 14,
             horizontal_sub: 1,
             vertical_sub: 1,
         };
 
         let output = MCU::get_mcus(input);
 
-        let expected_y = vec![vec![103; 8]; 8];
-        let expected_cb = vec![vec![-98; 8]; 8];
-        let expected_cr = vec![vec![37; 8]; 8];
+        let expected_y_1 = vec![vec![50;8]; 8];
+        let expected_y_2 = vec![vec![20;8]; 8];
+        let expected_y_3 = vec![vec![100;8]; 8];
+        let expected_y_4 = vec![vec![-2;8]; 8];
 
-        assert_eq!(output.y_mcu[0].values, expected_y);
-        assert_eq!(output.cb_mcu[0].values, expected_cb);
-        assert_eq!(output.cr_mcu[0].values, expected_cr);
+        assert_eq!(output.y_mcu[0].values, expected_y_1);
+        assert_eq!(output.y_mcu[1].values, expected_y_2);
+        assert_eq!(output.y_mcu[2].values, expected_y_3);
+        assert_eq!(output.y_mcu[3].values, expected_y_4);
     }
 
     //FOLLOWING TEST IS OK BUT DOESNT PASS BC OF PRECISION
