@@ -165,14 +165,30 @@ mod tests {
         let ac_lum_codes = BitCode::calculate_huffman_codes(AC_LUMINANCE_CODES_PER_BITSIZE.to_vec(), AC_LUMINANCE_VALUES.to_vec());
         let input1: (u8, i8) = (0, 10);
         let input2: (u8, i8) = (3, 1);
+        let input4: (u8, i8) = (0, 1);
+        let input6: (u8, i8) = (2, 1);
+        let input7: (u8, i8) = (3, 1);
+        let input8: (u8, i8) = (0, 0);
         let output1 = BitCode::get_ac_bitcode(input1, &ac_lum_codes);
         let output2 = BitCode::get_ac_bitcode(input2, &ac_lum_codes);
+        let output4 = BitCode::get_ac_bitcode(input4, &ac_lum_codes);
+        let output6 = BitCode::get_ac_bitcode(input6, &ac_lum_codes);
+        let output7 = BitCode::get_ac_bitcode(input7, &ac_lum_codes);
+        let output8 = BitCode::get_ac_bitcode(input8, &ac_lum_codes);
 
         let expected1 = BitCode::new_with_params(0b10111010, 8);
         let expected2 = BitCode::new_with_params(0b1110101, 7);
+        let expected4 = BitCode::new_with_params(0b001, 3);
+        let expected6 = BitCode::new_with_params(0b111001, 6);
+        let expected7 = BitCode::new_with_params(0b1110101, 7);
+        let expected8 = BitCode::new_with_params(0b1010, 4);
 
         assert_eq!(output1, expected1);
         assert_eq!(output2, expected2);
+        assert_eq!(output4, expected4);
+        assert_eq!(output6, expected6);
+        assert_eq!(output7, expected7);
+        assert_eq!(output8, expected8);
     }
 
     #[test]
