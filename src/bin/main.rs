@@ -64,6 +64,7 @@ fn main() {
             let y_encoded = RLEncoded::new(quantized_image_mcu.y_mcu[i].zig_zag_traversal());
             last_dc_lum = y_encoded.dc_coef;
             let dc_bitcode = BitCode::get_dc_bitcode(y_encoded.dc_coef, &dc_lum_codes);
+            println!("DC lum bitcode : {:?}", &dc_bitcode);
             let mut ac_bitcodes: Vec<BitCode> = Vec::new();
             for pair in y_encoded.ac_coefs {
                 ac_bitcodes.push(BitCode::get_ac_bitcode(pair, &ac_lum_codes));
@@ -71,11 +72,13 @@ fn main() {
             writer.write_bitcode(&dc_bitcode);
             for bc in ac_bitcodes {
                 writer.write_bitcode(&bc);
+                println!("AC lum bitcode : {:?}", &bc);
             }
 
             let cb_encoded = RLEncoded::new(quantized_image_mcu.cb_mcu[i].zig_zag_traversal());
             last_dc_cb = cb_encoded.dc_coef;
             let dc_bitcode = BitCode::get_dc_bitcode(cb_encoded.dc_coef, &dc_chrom_codes);
+            println!("DC cb bitcode : {:?}", &dc_bitcode);
             let mut ac_bitcodes: Vec<BitCode> = Vec::new();
             for pair in cb_encoded.ac_coefs {
                 ac_bitcodes.push(BitCode::get_ac_bitcode(pair, &ac_chrom_codes));
@@ -83,11 +86,13 @@ fn main() {
             writer.write_bitcode(&dc_bitcode);
             for bc in ac_bitcodes {
                 writer.write_bitcode(&bc);
+                println!("AC cb bitcode : {:?}", &bc);
             }
 
             let cr_encoded = RLEncoded::new(quantized_image_mcu.cr_mcu[i].zig_zag_traversal());
             last_dc_cr = cr_encoded.dc_coef;
             let dc_bitcode = BitCode::get_dc_bitcode(cr_encoded.dc_coef, &dc_chrom_codes);
+            println!("DC cr bitcode : {:?}", &dc_bitcode);
             let mut ac_bitcodes: Vec<BitCode> = Vec::new();
             for pair in cr_encoded.ac_coefs {
                 ac_bitcodes.push(BitCode::get_ac_bitcode(pair, &ac_chrom_codes));
@@ -95,10 +100,12 @@ fn main() {
             writer.write_bitcode(&dc_bitcode);
             for bc in ac_bitcodes {
                 writer.write_bitcode(&bc);
+                println!("AC cr bitcode : {:?}", &bc);
             }
         } else {
             let y_encoded = RLEncoded::new(quantized_image_mcu.y_mcu[i].zig_zag_traversal());
             let dc_bitcode = BitCode::get_dc_bitcode(y_encoded.dc_coef - last_dc_lum, &dc_lum_codes);
+            println!("DC bitcode : {:?}", &dc_bitcode);
             let mut ac_bitcodes: Vec<BitCode> = Vec::new();
             for pair in y_encoded.ac_coefs {
                 ac_bitcodes.push(BitCode::get_ac_bitcode(pair, &ac_lum_codes));
@@ -106,11 +113,13 @@ fn main() {
             writer.write_bitcode(&dc_bitcode);
             for bc in ac_bitcodes {
                 writer.write_bitcode(&bc);
+                println!("AC lum bitcode : {:?}", &bc);
             }
             last_dc_lum = y_encoded.dc_coef;
 
             let cb_encoded = RLEncoded::new(quantized_image_mcu.cb_mcu[i].zig_zag_traversal());
             let dc_bitcode = BitCode::get_dc_bitcode(cb_encoded.dc_coef - last_dc_cb, &dc_chrom_codes);
+            println!("DC cb bitcode : {:?}", &dc_bitcode);
             let mut ac_bitcodes: Vec<BitCode> = Vec::new();
             for pair in cb_encoded.ac_coefs {
                 ac_bitcodes.push(BitCode::get_ac_bitcode(pair, &ac_chrom_codes));
@@ -118,11 +127,13 @@ fn main() {
             writer.write_bitcode(&dc_bitcode);
             for bc in ac_bitcodes {
                 writer.write_bitcode(&bc);
+                println!("AC cb bitcode : {:?}", &bc);
             }
             last_dc_cb = cb_encoded.dc_coef;
 
             let cr_encoded = RLEncoded::new(quantized_image_mcu.cr_mcu[i].zig_zag_traversal());
             let dc_bitcode = BitCode::get_dc_bitcode(cr_encoded.dc_coef - last_dc_cr, &dc_chrom_codes);
+            println!("DC cr bitcode : {:?}", &dc_bitcode);
             let mut ac_bitcodes: Vec<BitCode> = Vec::new();
             for pair in cr_encoded.ac_coefs {
                 ac_bitcodes.push(BitCode::get_ac_bitcode(pair, &ac_chrom_codes));
@@ -130,6 +141,7 @@ fn main() {
             writer.write_bitcode(&dc_bitcode);
             for bc in ac_bitcodes {
                 writer.write_bitcode(&bc);
+                println!("AC cr bitcode : {:?}", &bc);
             }
             last_dc_cr = cr_encoded.dc_coef;
         }

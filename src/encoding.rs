@@ -146,7 +146,7 @@ mod tests {
     }
 
     #[test]
-    fn get_bitcode_test() {
+    fn get_dc_bitcode_test() {
         let dc_lum_codes = BitCode::calculate_huffman_codes(DC_LUMINANCE_CODES_PER_BITSIZE.to_vec(), DC_LUMINANCE_VALUES.to_vec());
         let input1: i8 = -30;
         let input2: i8 = 3;

@@ -37,7 +37,8 @@ impl<'a> Writer<'a> {
         self.index += bitcode.num_bits;
 
         while self.index >= 8 {
-            let out = self.buffer >> self.index - (self.index / 8) * 8;
+            //let out = self.buffer >> self.index - (self.index / 8) * 8;   //last used
+            let out = self.buffer >> self.index - 8;
             let output: [u8; 1] = [out as u8];
             match self.file.write_all(&output) {
                 Err(why) => panic!("couldn't write : {}", why),
@@ -51,6 +52,8 @@ impl<'a> Writer<'a> {
                 self.file.write_all(&[0x00]).unwrap();
             }
         }
+
+        //println!("Wrote bitcode : {:?}", bitcode);
     }
 
     pub fn write_rest(&mut self) {
