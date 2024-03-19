@@ -31,6 +31,10 @@ impl YcbcrImage {
             cr_vec.push(cr_line_vec);
         }
 
+        y_vec.reverse();
+        cb_vec.reverse();
+        cr_vec.reverse();
+
         YcbcrImage {
             y_component: y_vec,
             cb_component: cb_vec,
