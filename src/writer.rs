@@ -175,6 +175,27 @@ mod tests {
     }
 
     #[test]
+    fn second_write_bitcode_test() {
+        let mut output: Vec<u8> = Vec::new();
+        let mut writer = Writer {
+            buffer: 0b0011011,
+            index: 7,
+            file: Box::new(&mut output),
+        };
+        
+        writer.write_bitcode(&BitCode {
+            code: 0b01011011110001,
+            num_bits: 14,
+        });
+
+        let expected: Vec<u8> = vec![0b00110110, 0b10110111];
+        assert_eq!(writer.buffer, 0b10001);
+        assert_eq!(writer.index, 5);
+        drop(writer);
+        assert_eq!(output, expected);
+    }
+
+    #[test]
     fn write_rest_test() {
         let mut output: Vec<u8> = Vec::new();
         let mut writer = Writer {
