@@ -38,7 +38,7 @@ impl<'a> Writer<'a> {
 
         while self.index >= 8 {
             //let out = self.buffer >> self.index - (self.index / 8) * 8;   //last used
-            let out = self.buffer >> self.index - 8;
+            let out = self.buffer >> (self.index - 8);
             let output: [u8; 1] = [out as u8];
             match self.file.write_all(&output) {
                 Err(why) => panic!("couldn't write : {}", why),
